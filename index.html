@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Dons Espirituais</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a4d2e;
+            --primary-light: #2d6a4f;
+            --accent: #d4a373;
+            --bg: #faf8f5;
+            --text: #2c3e50;
+            --text-light: #6c757d;
+            --white: #ffffff;
+            --shadow: rgba(26, 77, 46, 0.1);
+            --border: rgba(26, 77, 46, 0.15);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #faf8f5 0%, #f0ebe3 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        .decorative-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.03;
+            background-image: 
+                radial-gradient(circle at 20% 30%, var(--primary) 1px, transparent 1px),
+                radial-gradient(circle at 80% 70%, var(--accent) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px var(--shadow);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: none;
+        }
+
+        .instructions h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .instructions p {
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .legend-number {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .progress-bar {
+            background: var(--bg);
+            height: 8px;
+            border-radius: 100px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+            border-radius: 100px;
+        }
+
+        .question-container {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .question-container:last-child {
+            border-bottom: none;
+        }
+
+        .question-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-number {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .question-text {
+            flex: 1;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            padding-top: 0.5rem;
+            color: var(--text);
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-left: 56px;
+        }
+
+        .option-btn {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .option-btn.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+            transform: scale(1.05);
+        }
+
+        .option-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .option-label {
+            font-size: 0.75rem;
+            text-align: center;
+            line-height: 1.3;
+            opacity: 0.8;
+        }
+
+        .option-btn.selected .option-label {
+            opacity: 1;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .results {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .results h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .gift-item {
+            background: linear-gradient(135deg, var(--bg) 0%, var(--white) 100%);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .gift-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .gift-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .gift-name {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .gift-score {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .gift-bar {
+            background: var(--bg);
+            height: 12px;
+            border-radius: 100px;
+            overflow: hidden;
+            margin-top: 0.75rem;
+        }
+
+        .gift-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 100px;
+            transition: width 0.6s ease;
+        }
+
+        .gift-questions {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .restart-btn {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .restart-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .options {
+                margin-left: 0;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.5rem;
+            }
+
+            .option-btn {
+                padding: 0.75rem 0.25rem;
+            }
+
+            .option-number {
+                font-size: 1.2rem;
+            }
+
+            .option-label {
+                font-size: 0.65rem;
+            }
+
+            .question-header {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .legend {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .top-gifts-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 20px;
+            color: var(--white);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .top-gifts-section h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .top-gift-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .top-gift-badge:last-child {
+            margin-bottom: 0;
+        }
+
+        .badge-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge-rank {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .badge-name {
+            flex: 1;
+            margin: 0 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .badge-score {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-bg"></div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const questions = [
+            "Sou capaz de ajudar os outros a descobrirem os seus problemas espirituais.",
+            "Para mim é fácil consolar alguém que sofre.",
+            "Sinto-me à vontade quando convido as pessoas a tomarem uma decisão para Cristo.",
+            "Tomo as minhas decisões confiando na vontade de Deus.",
+            "Quando dou algo a outros, reagem como sendo uma resposta às suas orações.",
+            "Convido pessoas para comerem em minha casa.",
+            "Sou capaz de ver claramente como uma passagem bíblica se insere no seu contexto.",
+            "Sinto-me à vontade a dirigir atividades que envolvam pessoas.",
+            "Dou roupa ou alimentos aos carenciados.",
+            "Não acho difícil viver em situações menos confortáveis desde que possa pregar o evangelho.",
+            "Estou particularmente consciente da necessidade de ordem e sinto o perigo para a igreja quando ela não existe.",
+            "As minhas orações são mais concretas e específicas do que vagas e impessoais.",
+            "Quando falo, os meus interlocutores seguem interessados.",
+            "Estou disposto(a) a sofrer alegremente o desconforto a fim de responder às necessidades dos outros.",
+            "Dedico mais tempo à edificação dos membros do que à evangelização.",
+            "Sinto-me à vontade em dirigir qualquer ensino bíblico.",
+            "Sei quando devo recusar ou aceitar um compromisso.",
+            "Consigo discernir os verdadeiros motivos da maioria das pessoas.",
+            "Deus usa-me para animar as pessoas abatidas e que enfrentam crises.",
+            "As pessoas perguntam-me como é que podem ser salvas.",
+            "Vivo com a certeza de que Deus solucionará cada problema que surge na minha vida.",
+            "Sou capaz de investir com sabedoria e ser generoso/a nos meus donativos.",
+            "Quando encontro irmãos estrangeiros convido-os a vir para minha casa.",
+            "Consigo dar uma explicação bíblica às objeções sobre doutrina.",
+            "Na ausência de um líder ocupo facilmente a direção.",
+            "Fico calado/a quando estou desagradado/a, para não magoar os outros.",
+            "Sinto-me à vontade junto de pessoas que diferem de mim, que pertençam a uma raça ou uma cultura diferente.",
+            "Na minha vida privada está tudo bem orientado e ordenado.",
+            "Oro muitas vezes pelas necessidades dos outros.",
+            "As pessoas dizem que gostam de me ouvir falar da Palavra de Deus.",
+            "Quando sou solicitado(a) para responsabilidades, prefiro mais ajudar do que dirigir.",
+            "Envolvo-me a fim de promover a unidade da igreja e oponho-me aos elementos que a ameaçam.",
+            "Constato que as pessoas compreendem quando explico um texto bíblico.",
+            "A partir de uma decisão, prevejo, com exatidão, as consequências a longo prazo.",
+            "Reconheço os membros de igreja que são eficazes no desempenho das suas funções.",
+            "Encorajo facilmente os outros.",
+            "Guiado pelo Espírito Santo, conduzo almas à decisão por Cristo.",
+            "Estou convencido(a) de que missões aparentemente impossíveis podem ser realizadas pela fé.",
+            "Preocupo-me com as necessidades materiais dos outros e ajudo-os discretamente.",
+            "Tenho sempre em casa pessoas que me visitam.",
+            "Estou à vontade em apresentar assuntos bíblicos.",
+            "Sei moderar um debate, harmonizar pontos de vista diferentes e delegar responsabilidades.",
+            "Sinto-me muito tocado/a pelos marginalizados pela sociedade e pelas pessoas com necessidades especiais.",
+            "Suportarei estar separado/a da minha família e dos meus amigos para pregar o evangelho noutro país.",
+            "Antes de tomar uma decisão procuro prever todas as consequências a longo prazo.",
+            "Já vi muitas vezes as minhas orações serem atendidas.",
+            "Sei aplicar os princípios bíblicos à minha vida de uma maneira clara e lógica.",
+            "Estou disposto/a a pôr os meus talentos naturais ao serviço da comunidade.",
+            "Tenho satisfação em ajudar os recém-batizados a ultrapassarem as dificuldades, as angústias ou as dúvidas.",
+            "Quando sou confrontado(a) com um problema difícil, os ensinos bíblicos vêm-me facilmente ao espírito.",
+            "Sei aplicar, de maneira prática, à minha vida tudo aquilo que aprendo.",
+            "Muito antes de outros se aperceberem, sei discernir um espírito da verdade de um espírito errado.",
+            "Sei pôr em destaque as atitudes positivas de uma pessoa, mais do que as suas atitudes negativas.",
+            "Interesso-me mais pelo número de almas salvas do que pela maneira como elas foram levadas a tomar uma decisão.",
+            "Em situações aparentemente desesperadas ainda sou aquele/a que mantenho a esperança.",
+            "Dou sem esperar nada em troca e sem especificar o modo como quero que a minha oferta seja utilizada.",
+            "Se alguém não tem abrigo, estou disposto/a a oferecer-lhe hospitalidade.",
+            "Dá-me prazer debater e responder a perguntas bíblicas.",
+            "Quando assumo a liderança reina um bom espírito de unidade e de entusiasmo.",
+            "Indigno-me quando as pessoas são insensíveis às necessidades do seu próximo.",
+            "Lido facilmente com pessoas de diferentes níveis sociais.",
+            "Consigo fazer todas as minhas coisas e ainda chegar a horas aos meus compromissos.",
+            "Apresento a Deus, nas minhas orações, os detalhes da minha vida quotidiana, assim como as decisões importantes.",
+            "Quando falo tenho a faculdade de encorajar, sendo sensível às pessoas.",
+            "Os textos bíblicos relacionados com o serviço impressionam-me grandemente e levam-me a assumir muitas responsabilidades.",
+            "Sinto grande satisfação em visitar regularmente os membros da igreja.",
+            "Quando proponho um assunto espiritual as pessoas interessam-se e cooperam.",
+            "Encaro tudo na vida sob uma perspetiva bíblica."
+        ];
+
+        const giftsMapping = {
+            "Discernimento": [1, 18, 35, 52],
+            "Encorajamento": [2, 19, 36, 53],
+            "Evangelização": [3, 20, 37, 54],
+            "Fé": [4, 21, 38, 55],
+            "Liberalidade": [5, 22, 39, 56],
+            "Hospitalidade": [6, 23, 40, 57],
+            "Conhecimento": [7, 24, 41, 58],
+            "Direção": [8, 25, 42, 59],
+            "Misericórdia": [9, 26, 43, 60],
+            "Apostolado": [10, 27, 44, 61],
+            "Organização": [11, 28, 45, 62],
+            "Intercessão": [12, 29, 46, 63],
+            "Pregação": [13, 30, 47, 64],
+            "Serviço": [14, 31, 48, 65],
+            "Pastorado": [15, 32, 49, 66],
+            "Ensino": [16, 33, 50, 67],
+            "Sabedoria": [17, 34, 51, 68]
+        };
+
+        function App() {
+            const [answers, setAnswers] = useState({});
+            const [showResults, setShowResults] = useState(false);
+
+            const handleAnswer = (questionIndex, value) => {
+                setAnswers(prev => ({
+                    ...prev,
+                    [questionIndex]: value
+                }));
+            };
+
+            const calculateResults = () => {
+                const results = {};
+                
+                Object.entries(giftsMapping).forEach(([gift, questionNumbers]) => {
+                    const total = questionNumbers.reduce((sum, qNum) => {
+                        return sum + (answers[qNum - 1] || 0);
+                    }, 0);
+                    
+                    results[gift] = {
+                        total,
+                        questions: questionNumbers
+                    };
+                });
+
+                return Object.entries(results)
+                    .map(([name, data]) => ({ name, ...data }))
+                    .sort((a, b) => b.total - a.total);
+            };
+
+            const isComplete = Object.keys(answers).length === questions.length;
+            const progress = (Object.keys(answers).length / questions.length) * 100;
+
+            const handleSubmit = () => {
+                if (isComplete) {
+                    setShowResults(true);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            const handleRestart = () => {
+                setAnswers({});
+                setShowResults(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            if (showResults) {
+                const results = calculateResults();
+                const topGifts = results.filter(g => g.total >= 12);
+
+                return (
+                    <div className="app-container">
+                        <div className="content">
+                            <div className="header">
+                                <h1>Seus Resultados</h1>
+                                <p>Descubra os dons espirituais que Deus lhe concedeu</p>
+                            </div>
+
+                            {topGifts.length > 0 && (
+                                <div className="top-gifts-section">
+                                    <h3>✨ Seus Principais Dons</h3>
+                                    {topGifts.slice(0, 5).map((gift, index) => (
+                                        <div key={gift.name} className="top-gift-badge" style={{ animationDelay: `${index * 0.1}s` }}>
+                                            <div className="badge-content">
+                                                <div className="badge-rank">{index + 1}</div>
+                                                <div className="badge-name">{gift.name}</div>
+                                                <div className="badge-score">{gift.total}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="card">
+                                <div className="results">
+                                    <h2>Todos os Dons</h2>
+                                    {results.map((gift, index) => (
+                                        <div 
+                                            key={gift.name} 
+                                            className="gift-item"
+                                            style={{ animationDelay: `${index * 0.05}s` }}
+                                        >
+                                            <div className="gift-header">
+                                                <div className="gift-name">{gift.name}</div>
+                                                <div className="gift-score">{gift.total}</div>
+                                            </div>
+                                            <div className="gift-bar">
+                                                <div 
+                                                    className="gift-bar-fill" 
+                                                    style={{ width: `${(gift.total / 16) * 100}%` }}
+                                                ></div>
+                                            </div>
+                                            <div className="gift-questions">
+                                                Questões: {gift.questions.join(', ')}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="btn-container">
+                                    <button className="btn restart-btn" onClick={handleRestart}>
+                                        Refazer Teste
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="app-container">
+                    <div className="content">
+                        <div className="header">
+                            <h1>Teste de Dons Espirituais</h1>
+                            <p>Descubra os dons que Deus lhe concedeu para servir no Reino</p>
+                        </div>
+
+                        <div className="card instructions">
+                            <h3>📖 Instruções</h3>
+                            <p>
+                                Responda honestamente a cada afirmação, não segundo o que desejaria, 
+                                mas segundo o que corresponde verdadeiramente à sua realidade atual.
+                            </p>
+                            <div className="legend">
+                                <div className="legend-item">
+                                    <div className="legend-number">1</div>
+                                    <span>Nunca</span>
+                                </div>
+                                <div className="legend-item">
+                                    <div className="legend-number">2</div>
+                                    <span>Raramente</span>
+                                </div>
+                                <div className="legend-item">
+                                    <div className="legend-number">3</div>
+                                    <span>Frequentemente</span>
+                                </div>
+                                <div className="legend-item">
+                                    <div className="legend-number">4</div>
+                                    <span>Quase Sempre</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+                        </div>
+
+                        <div className="card">
+                            {questions.map((question, index) => (
+                                <div key={index} className="question-container">
+                                    <div className="question-header">
+                                        <div className="question-number">{index + 1}</div>
+                                        <div className="question-text">{question}</div>
+                                    </div>
+                                    <div className="options">
+                                        {[1, 2, 3, 4].map(value => (
+                                            <button
+                                                key={value}
+                                                className={`option-btn ${answers[index] === value ? 'selected' : ''}`}
+                                                onClick={() => handleAnswer(index, value)}
+                                            >
+                                                <div className="option-number">{value}</div>
+                                                <div className="option-label">
+                                                    {value === 1 ? 'Nunca' : value === 2 ? 'Raramente' : value === 3 ? 'Frequentemente' : 'Quase Sempre'}
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+
+                            <div className="btn-container">
+                                <button 
+                                    className="btn" 
+                                    onClick={handleSubmit}
+                                    disabled={!isComplete}
+                                >
+                                    {isComplete ? 'Ver Resultados ✨' : `Responda ${questions.length - Object.keys(answers).length} questões restantes`}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
